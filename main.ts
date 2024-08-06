@@ -57,7 +57,7 @@ namespace ThingSpeak {
     export function readData(fieldId: Field): void {
         control.inBackground(() => {
             let url = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldId}.json?api_key=${readApiKey}&results=1`;
-            let response = control.httpGet(url);
+            let response = isSimulator() ? mockHttpGet(url) : control.httpGet(url);
             let jsonResponse = JSON.parse(response);
             fieldValues[fieldId] = parseInt(jsonResponse.feeds[0][`field${fieldId}`]);
         });
@@ -84,6 +84,19 @@ namespace ThingSpeak {
             control.httpGet(url);
         });
     }
-}
 
+    function isSimulator(): boolean {
+        return control.deviceDalVersion() === "";
+    }
+
+    function mockHttpGet(url: string): string {
+        // Mock response for testing in the simulator
+        return JSON.stringify({
+            feeds: [{
+                [`field${Field.Field1}`]: "123",
+                [`field${Field.Field2}`]: "456"
+            }]
+        });
+    }
+}
 
