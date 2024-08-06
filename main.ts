@@ -27,11 +27,7 @@ namespace ThingSpeak {
     export function readData(fieldId: Field): void {
         control.inBackground(() => {
             let url = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldId}.json?api_key=${apiKey}&results=1`;
-            let buffer = pins.createBuffer(url.length);
-            for (let i = 0; i < url.length; i++) {
-                buffer.setNumber(NumberFormat.UInt8LE, i, url.charCodeAt(i));
-            }
-            pins.i2cWriteBuffer(0x42, buffer);
+            let response = control.httpGet(url);
             // Process the response
         });
     }
