@@ -15,6 +15,7 @@ enum Field {
 namespace ThingSpeak {
     let apiKey = "";
     let channelID = 0;
+    let fieldValue = 0;
 
     //% block
     export function connect(channel: number, key: string): void {
@@ -28,8 +29,14 @@ namespace ThingSpeak {
         control.inBackground(() => {
             let url = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldId}.json?api_key=${apiKey}&results=1`;
             let response = control.httpGet(url);
-            // Process the response
+            let jsonResponse = JSON.parse(response);
+            fieldValue = parseInt(jsonResponse.feeds[0][`field${fieldId}`]);
         });
+    }
+
+    //% block
+    export function getFieldValue(): number {
+        return fieldValue;
     }
 }
 
