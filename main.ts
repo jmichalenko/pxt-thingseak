@@ -32,6 +32,24 @@ namespace ThingSpeak {
     }
 
     /**
+     * Connect to Wi-Fi.
+     * @param ssid The SSID of the Wi-Fi network
+     * @param password The password of the Wi-Fi network
+     */
+    //% block="connect to Wi-Fi SSID $ssid with password $password"
+    export function connectWiFi(ssid: string, password: string): void {
+        control.inBackground(() => {
+            serial.redirect(
+                SerialPin.P8,
+                SerialPin.P12,
+                BaudRate.BaudRate115200
+            );
+            serial.writeString(`AT+CWJAP="${ssid}","${password}"\r\n`);
+            basic.pause(5000);
+        });
+    }
+
+    /**
      * Read data from a specific field in the ThingSpeak channel.
      * @param fieldId The field number to read from, eg: Field.Field1
      */
