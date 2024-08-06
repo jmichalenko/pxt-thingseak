@@ -13,21 +13,23 @@ enum Field {
 
 //% color=#0fbc11 icon="\uf1eb"
 namespace ThingSpeak {
-    let apiKey = "";
+    let readApiKey = "";
+    let writeApiKey = "";
     let channelID = 0;
     let fieldValues: number[] = [];
 
     //% block
-    export function connect(channel: number, key: string): void {
+    export function connect(channel: number, readKey: string, writeKey: string): void {
         channelID = channel;
-        apiKey = key;
+        readApiKey = readKey;
+        writeApiKey = writeKey;
     }
 
     //% block
     //% fieldId.defl=Field.Field1
     export function readData(fieldId: Field): void {
         control.inBackground(() => {
-            let url = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldId}.json?api_key=${apiKey}&results=1`;
+            let url = `https://api.thingspeak.com/channels/${channelID}/fields/${fieldId}.json?api_key=${readApiKey}&results=1`;
             let response = control.httpGet(url);
             let jsonResponse = JSON.parse(response);
             fieldValues[fieldId] = parseInt(jsonResponse.feeds[0][`field${fieldId}`]);
@@ -38,6 +40,16 @@ namespace ThingSpeak {
     //% fieldId.defl=Field.Field1
     export function getFieldValue(fieldId: Field): number {
         return fieldValues[fieldId];
+    }
+
+    //% block
+    //% fieldId.defl=Field.Field1
+    //% value.defl=0
+    export function writeData(fieldId: Field, value: number): void {
+        control.inBackground(() => {
+            let url = `https://api.thingspeak.com/update?api_key=${writeApiKey}&field${fieldId}=${value}`;
+            control.httpGet(url);
+        });
     }
 }
 
