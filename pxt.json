@@ -1,0 +1,8 @@
+{
+    "name": "ThingSpeak",
+    "description": "Extension to read data from ThingSpeak",
+    "dependencies": {},
+    "files": [
+        "main.ts"
+    ]
+}
